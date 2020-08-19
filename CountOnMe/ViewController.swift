@@ -8,10 +8,10 @@
 
 import UIKit
 
-class ViewController: UIViewController {
+class CalculatorViewController: UIViewController {
     @IBOutlet weak var textView: UITextView!
     @IBOutlet var numberButtons: [UIButton]!
-    
+    //zzz
     var elements: [String] {
         return textView.text.split(separator: " ").map { "\($0)" }
     }
@@ -33,24 +33,13 @@ class ViewController: UIViewController {
         return textView.text.firstIndex(of: "=") != nil
     }
     
-    // View Life cycles
-    override func viewDidLoad() {
-        super.viewDidLoad()
-        // Do any additional setup after loading the view.
-    }
+
     
     
     // View actions
     @IBAction func tappedNumberButton(_ sender: UIButton) {
-        guard let numberText = sender.title(for: .normal) else {
-            return
-        }
         
-        if expressionHaveResult {
-            textView.text = ""
-        }
-        
-        textView.text.append(numberText)
+        textView.text.append(sender.tag.description)
     }
     
     @IBAction func tappedAdditionButton(_ sender: UIButton) {
