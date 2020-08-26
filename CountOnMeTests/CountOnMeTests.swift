@@ -29,7 +29,7 @@ class CountOnMeTests: XCTestCase {
     }
     
     func testMathOperation() {
-        let calculator = Calculator()
+//        let calculator = Calculator()
         
         
     }
