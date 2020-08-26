@@ -1,12 +1,8 @@
-//
-//  Calculator.swift
-//  CountOnMe
-//
-//  Created by Saddam Satouyev on 19/08/2020.
-//  Copyright © 2020 Vincent Saluzzo. All rights reserved.
-//
-import UIKit
 import Foundation
+
+protocol CalculatorDelegate {
+    func didUpdateTextToCompute(textToCompute: String)
+}
 
 class Calculator {
     
@@ -18,11 +14,11 @@ class Calculator {
         }
     }
     
+    
     var elements: [String] {
         return textToCompute.split(separator: " ").map { "\($0)" }
     }
     
-    // Error check computed variables
     var expressionIsCorrect: Bool {
         return elements.last != "+" && elements.last != "-"
     }
@@ -34,6 +30,8 @@ class Calculator {
     var canAddOperator: Bool {
         return elements.last != "+" && elements.last != "-"
     }
+
+    
     
     var expressionHaveResult: Bool {
         return textToCompute.firstIndex(of: "=") != nil
@@ -41,34 +39,28 @@ class Calculator {
     
     
     func addDigit(_ digit: Int) {
-        
         textToCompute.append(digit.description)
     }
     
-    func addMathOperator(_ mathOperator: MathOperator) {
+    func addMathOperator(_ mathOperator: MathOperator) throws {
         if canAddOperator {
             textToCompute.append(" \(mathOperator.symbol) ")
         } else {
-            let alertVC = UIAlertController(title: "Zéro!", message: "Un operateur est déja mis !", preferredStyle: .alert)
-            alertVC.addAction(UIAlertAction(title: "OK", style: .cancel, handler: nil))
-            //self.present(alertVC, animated: true, completion: nil)
+            throw CalculatorError.cannotAddMathOperator
         }
     }
     
+    func reset() {
+        textToCompute.removeAll()
+    }
     
-    func resolveOperation() {
+    func resolveOperation() throws {
         guard expressionIsCorrect else {
-            let alertVC = UIAlertController(title: "Zéro!", message: "Entrez une expression correcte !", preferredStyle: .alert)
-            alertVC.addAction(UIAlertAction(title: "OK", style: .cancel, handler: nil))
-            //return self.present(alertVC, animated: true, completion: nil)
-            return
+            throw CalculatorError.expressionIsIncorrect
         }
         
         guard expressionHaveEnoughElement else {
-            let alertVC = UIAlertController(title: "Zéro!", message: "Démarrez un nouveau calcul !", preferredStyle: .alert)
-            alertVC.addAction(UIAlertAction(title: "OK", style: .cancel, handler: nil))
-            //return self.present(alertVC, animated: true, completion: nil)
-            return
+            throw CalculatorError.expressionHasNotEnoughElement
         }
         
         // Create local copy of operations
@@ -85,8 +77,12 @@ class Calculator {
             case "+": result = left + right
             case "-": result = left - right
             case "×": result = left * right
-            case "÷": result = left / right
+            case "÷":
+                guard right != 0 else { throw CalculatorError.cannotDivideByZero }
+                result = left / right
             default: fatalError("Unknown operator !")
+                
+
             }
             
             operationsToReduce = Array(operationsToReduce.dropFirst(3))

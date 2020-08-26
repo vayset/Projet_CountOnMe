@@ -1,64 +1,81 @@
 import UIKit
 
-enum MathOperator: CaseIterable {
-    case plus
-    case minus
-    case divide
-    case multiply
-    
-    
-    var symbol: String {
-        switch self {
-        case .plus: return "+"
-        case .minus: return "-"
-        case .multiply: return "×"
-        case .divide: return "÷"
-        }
-    }
-}
-
-protocol CalculatorDelegate {
-    func didUpdateTextToCompute(textToCompute: String)
-}
-
-
 
 class CalculatorViewController: UIViewController {
     
+    // MARK: - INTERNAL
+    
+    // MARK: Lifecycle
     
     override func viewDidLoad() {
         super.viewDidLoad()
         calculator.delegate = self
     }
     
+    
+    
+    
+    // MARK: - PRIVATE
+    
+    
+    // MARK: Properties - Private
+     
     private let calculator = Calculator()
     
-    @IBOutlet weak var textView: UITextView!
-    @IBOutlet var numberButtons: [UIButton]!
+    
+    // MARK: IBOutlets
+    
+    @IBOutlet private weak var operationTextView: UITextView!
     
     
-    // View actions
-    @IBAction func tappedNumberButton(_ sender: UIButton) {
+    
+    // MARK: Methods - Private
+    
+    private func handleCalculatorError(error: Error) {
+        guard let calculatorError = error as? CalculatorError else { return }
+        presentSimpleAlert(message: calculatorError.errorMessage)
+    }
+    
+    private func presentSimpleAlert(message: String) {
+        let alertVC = UIAlertController(title: "Zéro!", message: message, preferredStyle: .alert)
+        alertVC.addAction(UIAlertAction(title: "OK", style: .cancel, handler: nil))
+        present(alertVC, animated: true, completion: nil)
+    }
+    
+    
+    // MARK: IBActions
+    
+    @IBAction private func didTapOnDigitButton(_ sender: UIButton) {
         calculator.addDigit(sender.tag)
     }
-        
-    @IBAction func tappedMathOperatorButton(_ sender: UIButton) {
+    
+    @IBAction private func didTapOnMathOperatorButton(_ sender: UIButton) {
         let mathOperator = MathOperator.allCases[sender.tag]
-        calculator.addMathOperator(mathOperator)
+        do {
+            try calculator.addMathOperator(mathOperator)
+        } catch {
+            handleCalculatorError(error: error)
+        }
     }
     
+    @IBAction private func didTapOnResetButton() {
+        calculator.reset()
+    }
     
-    @IBAction func tappedEqualButton(_ sender: UIButton) {
-        calculator.resolveOperation()
+    @IBAction private func didTapOnEqualButton(_ sender: UIButton) {
+        do {
+            try calculator.resolveOperation()
+        } catch {
+            handleCalculatorError(error: error)
+        }
     }
     
 }
 
 
 extension CalculatorViewController: CalculatorDelegate {
+    
     func didUpdateTextToCompute(textToCompute: String) {
-        textView.text = textToCompute
+        operationTextView.text = textToCompute
     }
-    
-    
 }
