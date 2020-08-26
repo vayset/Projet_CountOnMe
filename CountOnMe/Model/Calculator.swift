@@ -54,6 +54,10 @@ class Calculator {
         textToCompute.removeAll()
     }
     
+    func test() -> <#return type#> {
+        <#function body#>
+    }
+    
     func resolveOperation() throws {
         guard expressionIsCorrect else {
             throw CalculatorError.expressionIsIncorrect
