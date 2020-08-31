@@ -6,6 +6,10 @@ protocol CalculatorDelegate {
 
 class Calculator {
     
+    // MARK: - INTERNAL
+    
+    // MARK: Properties - Internal
+    
     var delegate: CalculatorDelegate?
     
     var textToCompute: String = "" {
@@ -14,31 +18,19 @@ class Calculator {
         }
     }
     
-    
-    var elements: [String] {
-        return textToCompute.split(separator: " ").map { "\($0)" }
-    }
-    
-    var expressionIsCorrect: Bool {
-        return elements.last != "+" && elements.last != "-"
-    }
-    
-    var expressionHaveEnoughElement: Bool {
-        return elements.count >= 3
-    }
-    
-    var canAddOperator: Bool {
-        return elements.last != "+" && elements.last != "-"
-    }
 
     
+    // textToCompute => String => "23 + 5 - 25"
+    // elements => [String] => ["23", "+", "5", "-", "0"]
     
-    var expressionHaveResult: Bool {
-        return textToCompute.firstIndex(of: "=") != nil
-    }
-    
+    // MARK: Methods - Internal
     
     func addDigit(_ digit: Int) {
+        
+        if elements.last == "0" {
+            textToCompute.removeLast()
+        }
+        
         textToCompute.append(digit.description)
     }
     
@@ -52,10 +44,6 @@ class Calculator {
     
     func reset() {
         textToCompute.removeAll()
-    }
-    
-    func test() -> <#return type#> {
-        <#function body#>
     }
     
     func resolveOperation() throws {
@@ -86,7 +74,7 @@ class Calculator {
                 result = left / right
             default: fatalError("Unknown operator !")
                 
-
+                
             }
             
             operationsToReduce = Array(operationsToReduce.dropFirst(3))
@@ -95,6 +83,35 @@ class Calculator {
         
         textToCompute.append(" = \(operationsToReduce.first!)")
     }
+    
+    
+    
+    
+    
+    
+    // MARK: - PRIVATE
+    
+    private var elements: [String] {
+        return textToCompute.split(separator: " ").map { "\($0)" }
+    }
+    
+    private var expressionIsCorrect: Bool {
+        return elements.last != "+" && elements.last != "-"
+    }
+    
+    private var expressionHaveEnoughElement: Bool {
+        return elements.count >= 3
+    }
+    
+    private var canAddOperator: Bool {
+        return elements.last != "+" && elements.last != "-"
+    }
+    
+    private var expressionHaveResult: Bool {
+        return textToCompute.firstIndex(of: "=") != nil
+    }
+    
+    
     
     
 }
