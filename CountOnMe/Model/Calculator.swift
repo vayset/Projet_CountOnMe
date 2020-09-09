@@ -18,7 +18,7 @@ class Calculator {
         }
     }
     
-
+    
     
     // textToCompute => String => "23 + 5 - 25"
     // elements => [String] => ["23", "+", "5", "-", "0"]
@@ -26,6 +26,8 @@ class Calculator {
     // MARK: Methods - Internal
     
     func addDigit(_ digit: Int) {
+        
+        removeOperationIfHasResult()
         
         if elements.last == "0" {
             textToCompute.removeLast()
@@ -35,11 +37,12 @@ class Calculator {
     }
     
     func addMathOperator(_ mathOperator: MathOperator) throws {
-        if canAddOperator {
-            textToCompute.append(" \(mathOperator.symbol) ")
-        } else {
-            throw CalculatorError.cannotAddMathOperator
-        }
+        
+        removeOperationIfHasResult()
+        
+        try ensureCanAddOperator()
+        
+        textToCompute.append(" \(mathOperator.symbol) ")
     }
     
     func reset() {
@@ -47,24 +50,32 @@ class Calculator {
     }
     
     func resolveOperation() throws {
-        guard expressionIsCorrect else {
-            throw CalculatorError.expressionIsIncorrect
-        }
-        
-        guard expressionHaveEnoughElement else {
-            throw CalculatorError.expressionHasNotEnoughElement
-        }
+       try ensureCanResolveOperation()
         
         // Create local copy of operations
         var operationsToReduce = elements
         
+        var startRectangleIndex = 0
+        
         // Iterate over operations while an operand still here
         while operationsToReduce.count > 1 {
-            let left = Int(operationsToReduce[0])!
-            let operand = operationsToReduce[1]
-            let right = Int(operationsToReduce[2])!
+            guard
+                let left = Double(operationsToReduce[startRectangleIndex]),
+                let right = Double(operationsToReduce[startRectangleIndex + 2])
+                else { throw CalculatorError.expressionIsIncorrect }
             
-            let result: Int
+            let operand = operationsToReduce[startRectangleIndex + 1]
+            
+            let isOperationContainingPriorityOperator = operationsToReduce.contains("×") || operationsToReduce.contains("÷")
+            let isRectangleOperandAPriorityOperator = operand == "×" || operand == "÷"
+            
+            if isOperationContainingPriorityOperator && !isRectangleOperandAPriorityOperator {
+                startRectangleIndex += 2
+                continue
+            }
+            
+            let result: Double
+            
             switch operand {
             case "+": result = left + right
             case "-": result = left - right
@@ -72,21 +83,26 @@ class Calculator {
             case "÷":
                 guard right != 0 else { throw CalculatorError.cannotDivideByZero }
                 result = left / right
-            default: fatalError("Unknown operator !")
+            default: throw CalculatorError.impossibleAction
+                //                fatalError("Unknown operator !")
                 
                 
             }
             
-            operationsToReduce = Array(operationsToReduce.dropFirst(3))
-            operationsToReduce.insert("\(result)", at: 0)
+            operationsToReduce.removeSubrange(startRectangleIndex...startRectangleIndex + 2)
+            let formattedResult = getFormattedResult(from: result)
+            operationsToReduce.insert("\(formattedResult)", at: startRectangleIndex)
+            startRectangleIndex = 0
         }
         
-        textToCompute.append(" = \(operationsToReduce.first!)")
+        
+        let finalResult = operationsToReduce.first!
+        
+            
+            
+        
+        textToCompute.append(" = \(finalResult)")
     }
-    
-    
-    
-    
     
     
     // MARK: - PRIVATE
@@ -96,21 +112,63 @@ class Calculator {
     }
     
     private var expressionIsCorrect: Bool {
-        return elements.last != "+" && elements.last != "-"
+        return !isLastElementOperator
     }
     
     private var expressionHaveEnoughElement: Bool {
         return elements.count >= 3
     }
     
-    private var canAddOperator: Bool {
-        return elements.last != "+" && elements.last != "-"
+
+    private func ensureCanAddOperator() throws {
+        guard !isLastElementOperator else {
+            throw CalculatorError.cannotAddMathOperatorAfterAnother
+        }
+        guard !textToCompute.isEmpty else {
+            throw CalculatorError.cannotAddMathOperatorInTheBeginning
+        }
     }
+    
+    private func ensureCanResolveOperation() throws {
+        guard expressionIsCorrect else {
+            throw CalculatorError.expressionIsIncorrect
+        }
+        
+        guard expressionHaveEnoughElement else {
+            throw CalculatorError.expressionHasNotEnoughElement
+        }
+    }
+    
+    private func getFormattedResult(from result: Double) -> String {
+        let numberFormatter = NumberFormatter()
+        
+        numberFormatter.numberStyle = .decimal
+        
+        let formmatedResult = numberFormatter.string(from: result as NSNumber)!
+        
+        return formmatedResult
+    }
+    
+    private var isLastElementOperator: Bool {
+        return MathOperator.allCases.contains(where: { $0.symbol == elements.last } )
+        //return elements.last == "+" || elements.last == "-" || elements.last == "×" || elements.last == "÷"
+    }
+
     
     private var expressionHaveResult: Bool {
-        return textToCompute.firstIndex(of: "=") != nil
+        return textToCompute.contains("=")
     }
     
+    
+    private func removeOperationIfHasResult() {
+        if expressionHaveResult {
+            textToCompute.removeAll()
+        }
+    }
+    
+//    private var operationPriority: Bool {
+//
+//    }
     
     
     
