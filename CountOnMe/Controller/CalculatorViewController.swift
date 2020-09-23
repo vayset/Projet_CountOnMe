@@ -12,14 +12,11 @@ class CalculatorViewController: UIViewController {
         calculator.delegate = self
     }
     
-    
-    
-    
     // MARK: - PRIVATE
     
     
     // MARK: Properties - Private
-     
+    
     private let calculator = Calculator()
     
     

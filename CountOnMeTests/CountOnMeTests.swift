@@ -118,31 +118,31 @@ class CountOnMeTests: XCTestCase {
     
     
     func testGivenOneDigitAndOperator_WhenAddAnotherMultiplyMathOperator_ThenGetError() {
-         
-         calculator.addDigit(4)
-         
-         try! calculator.addMathOperator(.plus)
-         
-         XCTAssertThrowsError(try calculator.addMathOperator(.multiply), "") { (error) in
-             let calculatorError = error as! CalculatorError
-             XCTAssertEqual(calculatorError, CalculatorError.cannotAddMathOperatorAfterAnother)
-         }
-         
-     }
-     
-  
-    func testGivenOneDigitAndOperator_WhenAddAnotherMultiplyMathOperator_ThenGetErrorAS() {
-            
-            calculator.addDigit(4)
-            
-            try! calculator.addMathOperator(.multiply)
-            
-            XCTAssertThrowsError(try calculator.addMathOperator(.plus), "") { (error) in
-                let calculatorError = error as! CalculatorError
-                XCTAssertEqual(calculatorError, CalculatorError.cannotAddMathOperatorAfterAnother)
-            }
-            
+        
+        calculator.addDigit(4)
+        
+        try! calculator.addMathOperator(.plus)
+        
+        XCTAssertThrowsError(try calculator.addMathOperator(.multiply), "") { (error) in
+            let calculatorError = error as! CalculatorError
+            XCTAssertEqual(calculatorError, CalculatorError.cannotAddMathOperatorAfterAnother)
         }
+        
+    }
+    
+    
+    func testGivenOneDigitAndOperator_WhenAddAnotherMultiplyMathOperator_ThenGetErrorAS() {
+        
+        calculator.addDigit(4)
+        
+        try! calculator.addMathOperator(.multiply)
+        
+        XCTAssertThrowsError(try calculator.addMathOperator(.plus), "") { (error) in
+            let calculatorError = error as! CalculatorError
+            XCTAssertEqual(calculatorError, CalculatorError.cannotAddMathOperatorAfterAnother)
+        }
+        
+    }
     
     
     // MARK: - resolveOperation
@@ -186,6 +186,23 @@ class CountOnMeTests: XCTestCase {
         
     }
     
+    func testGivenMultiplicationAndAdditionOperation_WhenResolvingOperation_ThenGetCorrectResult() {
+        calculator.addDigit(2)
+        
+        try! calculator.addMathOperator(.multiply)
+        
+        calculator.addDigit(2)
+        
+        try! calculator.addMathOperator(.plus)
+        
+        calculator.addDigit(6)
+        
+        try! calculator.resolveOperation()
+        
+        XCTAssertEqual(calculator.textToCompute, "2 × 2 + 6 = 10")
+        
+    }
+    
     func testGivenDivisionOperation_WhenResolvingOperation_ThenGetCorrectResult() {
         calculator.addDigit(2)
         
@@ -196,6 +213,23 @@ class CountOnMeTests: XCTestCase {
         try! calculator.resolveOperation()
         
         XCTAssertEqual(calculator.textToCompute, "2 ÷ 2 = 1")
+        
+    }
+    
+    func testGivenDivisionAndAdditionOperation_WhenResolvingOperation_ThenGetCorrectResult() {
+        calculator.addDigit(2)
+        
+        try! calculator.addMathOperator(.divide)
+        
+        calculator.addDigit(2)
+        
+        try! calculator.addMathOperator(.plus)
+        
+        calculator.addDigit(6)
+        
+        try! calculator.resolveOperation()
+        
+        XCTAssertEqual(calculator.textToCompute, "2 ÷ 2 + 6 = 7")
         
     }
     
@@ -247,7 +281,7 @@ class CountOnMeTests: XCTestCase {
         
         XCTAssertThrowsError(try calculator.resolveOperation(), "") { (error) in
             let calculatorError = error as! CalculatorError
-            XCTAssertEqual(calculatorError, CalculatorError.impossibleAction)
+            XCTAssertEqual(calculatorError, CalculatorError.unknownMathOperator)
         }
     }
     
@@ -257,11 +291,92 @@ class CountOnMeTests: XCTestCase {
         calculator.addDigit(2)
         try! calculator.addMathOperator(.multiply)
         calculator.addDigit(5)
-
+        
         try! calculator.resolveOperation()
         
         XCTAssertEqual(calculator.textToCompute, "2 + 2 × 5 = 12")
-
+        
+    }
+    
+    func testGivenStartOperation_WhenOperatingWithTwoTimesAdditionAndMultiplication_ThenaCalculationWithRespectForPriorities() {
+        calculator.addDigit(2)
+        try! calculator.addMathOperator(.plus)
+        calculator.addDigit(2)
+        try! calculator.addMathOperator(.plus)
+        calculator.addDigit(5)
+        try! calculator.addMathOperator(.multiply)
+        calculator.addDigit(2)
+        
+        try! calculator.resolveOperation()
+        
+        XCTAssertEqual(calculator.textToCompute, "2 + 2 + 5 × 2 = 14")
+        
+    }
+    
+    func testGivenStartOperation_WhenOperatingWithAdditionSubstractionAndMultiplication_ThenaCalculationWithRespectForPriorities() {
+        calculator.addDigit(4)
+        try! calculator.addMathOperator(.plus)
+        calculator.addDigit(4)
+        try! calculator.addMathOperator(.minus)
+        calculator.addDigit(2)
+        try! calculator.addMathOperator(.multiply)
+        calculator.addDigit(2)
+        
+        try! calculator.resolveOperation()
+        
+        XCTAssertEqual(calculator.textToCompute, "4 + 4 - 2 × 2 = 4")
+    }
+    
+    func testGivenStartOperation_WhenOperationWithAdditionAndDivision_ThenaCalculationWithRespectForPriorities() {
+        calculator.addDigit(4)
+        try! calculator.addMathOperator(.plus)
+        calculator.addDigit(4)
+        try! calculator.addMathOperator(.divide)
+        calculator.addDigit(2)
+        
+        try! calculator.resolveOperation()
+        
+        XCTAssertEqual(calculator.textToCompute, "4 + 4 ÷ 2 = 6")
+    }
+    
+    func testGivenStartOperation_WhenOperatingWithTwoTimesAdditionAndDivision_ThenaCalculationWithRespectForPriorities() {
+        calculator.addDigit(4)
+        try! calculator.addMathOperator(.plus)
+        calculator.addDigit(4)
+        try! calculator.addMathOperator(.plus)
+        calculator.addDigit(2)
+        try! calculator.addMathOperator(.divide)
+        calculator.addDigit(2)
+        
+        try! calculator.resolveOperation()
+        
+        XCTAssertEqual(calculator.textToCompute, "4 + 4 + 2 ÷ 2 = 9")
+    }
+    
+    func testGivenStartOperation_WhenOperatingWithAdditionSubstractionAndDivision_ThenaCalculationWithRespectForPriorities() {
+        calculator.addDigit(4)
+        try! calculator.addMathOperator(.plus)
+        calculator.addDigit(4)
+        try! calculator.addMathOperator(.minus)
+        calculator.addDigit(2)
+        try! calculator.addMathOperator(.divide)
+        calculator.addDigit(2)
+        
+        try! calculator.resolveOperation()
+        
+        XCTAssertEqual(calculator.textToCompute, "4 + 4 - 2 ÷ 2 = 7")
+    }
+    
+    func testGivenStartOperation_WhenOperatingWithMultiplicationAndDivision_ThenaCalculationWithRespectForPriorities() {
+        calculator.addDigit(2)
+        try! calculator.addMathOperator(.multiply)
+        calculator.addDigit(3)
+        try! calculator.addMathOperator(.divide)
+        calculator.addDigit(2)
+        
+        try! calculator.resolveOperation()
+        
+        XCTAssertEqual(calculator.textToCompute, "2 × 3 ÷ 2 = 3")
     }
     
     // MARK: - Reset
@@ -273,7 +388,57 @@ class CountOnMeTests: XCTestCase {
         
         XCTAssertEqual(calculator.textToCompute, "")
         
+    }
+    
+    func testGivenThatWeHaveACompleteOperation_WhenTapAnyDigit_ThenResetTextCompute() {
+        calculator.addDigit(2)
+        try! calculator.addMathOperator(.plus)
+        calculator.addDigit(2)
+        try! calculator.resolveOperation()
         
+        calculator.addDigit(8)
+        
+        XCTAssertEqual(calculator.textToCompute, "8")
+    }
+    
+    
+    // MARK: EROR MESSAGE
+    
+    
+    func testGivenThatWeAreDoingAManipulation_WhenAddMathOperatorAfterAnother_ThenGetErrorMessage() {
+        let calculatorError = CalculatorError.cannotAddMathOperatorAfterAnother
+        
+        XCTAssertEqual(calculatorError.errorMessage, "Un operateur est déja mis !")
+    }
+    
+    func testGivenThatWeAreDoingAManipulation_WhenExpressionIsIncorrect_ThenGetErrorMessage() {
+        let calculatorError = CalculatorError.expressionIsIncorrect
+        
+        XCTAssertEqual(calculatorError.errorMessage, "Entrez une expression correcte !")
+    }
+    
+    func testGivenThatWeAreDoingAManipulation_WhenExpressionHasNotEnoughElement_ThenGetErrorMessage() {
+        let calculatorError = CalculatorError.expressionHasNotEnoughElement
+        
+        XCTAssertEqual(calculatorError.errorMessage, "Démarrez un nouveau calcul !")
+    }
+    
+    func testGivenThatWeAreDoingAManipulation_WhenDivideByZero_ThenGetErrorMessage() {
+        let calculatorError = CalculatorError.cannotDivideByZero
+        
+        XCTAssertEqual(calculatorError.errorMessage, "Division par zéro impossible !")
+    }
+    
+    func testGivenThatWeAreDoingAManipulation_WhenAddMathOperatorInTheBeginning_ThenGetErrorMessage() {
+        let calculatorError = CalculatorError.cannotAddMathOperatorInTheBeginning
+        
+        XCTAssertEqual(calculatorError.errorMessage, "Vous ne pouvez pas sélectionner un opérateur au début d'une opération !")
+    }
+    
+    func testGivenThatWeAreDoingAManipulation_WhenImpossibleAction_ThenGetErrorMessage() {
+        let calculatorError = CalculatorError.unknownMathOperator
+        
+        XCTAssertEqual(calculatorError.errorMessage, "Action impossible !")
     }
     
     

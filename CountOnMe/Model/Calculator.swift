@@ -18,8 +18,6 @@ class Calculator {
         }
     }
     
-    
-    
     // textToCompute => String => "23 + 5 - 25"
     // elements => [String] => ["23", "+", "5", "-", "0"]
     
@@ -50,7 +48,7 @@ class Calculator {
     }
     
     func resolveOperation() throws {
-       try ensureCanResolveOperation()
+        try ensureCanResolveOperation()
         
         // Create local copy of operations
         var operationsToReduce = elements
@@ -83,9 +81,7 @@ class Calculator {
             case "÷":
                 guard right != 0 else { throw CalculatorError.cannotDivideByZero }
                 result = left / right
-            default: throw CalculatorError.impossibleAction
-                //                fatalError("Unknown operator !")
-                
+            default: throw CalculatorError.unknownMathOperator
                 
             }
             
@@ -98,14 +94,17 @@ class Calculator {
         
         let finalResult = operationsToReduce.first!
         
-            
-            
+        
+        
         
         textToCompute.append(" = \(finalResult)")
     }
     
     
     // MARK: - PRIVATE
+    
+    // MARK: Properties - PRIVATE
+    
     
     private var elements: [String] {
         return textToCompute.split(separator: " ").map { "\($0)" }
@@ -119,7 +118,22 @@ class Calculator {
         return elements.count >= 3
     }
     
-
+    private var expressionHaveResult: Bool {
+        return textToCompute.contains("=")
+    }
+    
+    private var isLastElementOperator: Bool {
+        return elements.last == "+" || elements.last == "-" || elements.last == "×" || elements.last == "÷"
+    }
+    
+    // MARK: Methods - PRIVATE
+    
+    private func removeOperationIfHasResult() {
+        if expressionHaveResult {
+            textToCompute.removeAll()
+        }
+    }
+    
     private func ensureCanAddOperator() throws {
         guard !isLastElementOperator else {
             throw CalculatorError.cannotAddMathOperatorAfterAnother
@@ -148,28 +162,5 @@ class Calculator {
         
         return formmatedResult
     }
-    
-    private var isLastElementOperator: Bool {
-        return MathOperator.allCases.contains(where: { $0.symbol == elements.last } )
-        //return elements.last == "+" || elements.last == "-" || elements.last == "×" || elements.last == "÷"
-    }
-
-    
-    private var expressionHaveResult: Bool {
-        return textToCompute.contains("=")
-    }
-    
-    
-    private func removeOperationIfHasResult() {
-        if expressionHaveResult {
-            textToCompute.removeAll()
-        }
-    }
-    
-//    private var operationPriority: Bool {
-//
-//    }
-    
-    
     
 }

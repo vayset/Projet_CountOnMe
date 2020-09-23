@@ -6,7 +6,7 @@ enum CalculatorError: Error {
     case expressionHasNotEnoughElement
     case cannotDivideByZero
     case cannotAddMathOperatorInTheBeginning
-    case impossibleAction
+    case unknownMathOperator
     
     
     
@@ -17,7 +17,7 @@ enum CalculatorError: Error {
         case .expressionHasNotEnoughElement: return "Démarrez un nouveau calcul !"
         case .cannotDivideByZero: return "Division par zéro impossible !"
         case .cannotAddMathOperatorInTheBeginning: return "Vous ne pouvez pas sélectionner un opérateur au début d'une opération !"
-        case .impossibleAction: return "Action impossible"
+        case .unknownMathOperator: return "Math operateur inconnue !"
         }
     }
 }
