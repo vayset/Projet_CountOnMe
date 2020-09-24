@@ -8,8 +8,6 @@ enum CalculatorError: Error {
     case cannotAddMathOperatorInTheBeginning
     case unknownMathOperator
     
-    
-    
     var errorMessage: String {
         switch self {
         case .cannotAddMathOperatorAfterAnother: return "Un operateur est déja mis !"

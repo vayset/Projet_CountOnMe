@@ -57,7 +57,6 @@ class CountOnMeTests: XCTestCase {
         XCTAssertEqual(calculator.textToCompute, "1")
     }
     
-    
     func testGivenSimpleOperationWithZero_WhenAddExtraZero_ThenOperationIsNotAddingZero() {
         
         calculator.addDigit(0)
@@ -69,7 +68,6 @@ class CountOnMeTests: XCTestCase {
         XCTAssertEqual(calculator.textToCompute, "0 + 0")
     }
     
-    
     func testGivenSimpleOperationWithZero_WhenAddExtraOtherDigit_ThenOperationIsReplacingLastZero() {
         
         calculator.addDigit(0)
@@ -80,7 +78,6 @@ class CountOnMeTests: XCTestCase {
         
         XCTAssertEqual(calculator.textToCompute, "0 + 1")
     }
-    
     
     // MARK: - addMathOperator
     
@@ -101,8 +98,6 @@ class CountOnMeTests: XCTestCase {
         }
     }
     
-    
-    
     func testGivenOneDigitAndOperator_WhenAddAnotherPlusMathOperator_ThenGetError() {
         
         calculator.addDigit(4)
@@ -115,7 +110,6 @@ class CountOnMeTests: XCTestCase {
         }
         
     }
-    
     
     func testGivenOneDigitAndOperator_WhenAddAnotherMultiplyMathOperator_ThenGetError() {
         
@@ -130,7 +124,6 @@ class CountOnMeTests: XCTestCase {
         
     }
     
-    
     func testGivenOneDigitAndOperator_WhenAddAnotherMultiplyMathOperator_ThenGetErrorAS() {
         
         calculator.addDigit(4)
@@ -143,7 +136,6 @@ class CountOnMeTests: XCTestCase {
         }
         
     }
-    
     
     // MARK: - resolveOperation
     
@@ -401,9 +393,7 @@ class CountOnMeTests: XCTestCase {
         XCTAssertEqual(calculator.textToCompute, "8")
     }
     
-    
     // MARK: EROR MESSAGE
-    
     
     func testGivenThatWeAreDoingAManipulation_WhenAddMathOperatorAfterAnother_ThenGetErrorMessage() {
         let calculatorError = CalculatorError.cannotAddMathOperatorAfterAnother
@@ -438,8 +428,7 @@ class CountOnMeTests: XCTestCase {
     func testGivenThatWeAreDoingAManipulation_WhenImpossibleAction_ThenGetErrorMessage() {
         let calculatorError = CalculatorError.unknownMathOperator
         
-        XCTAssertEqual(calculatorError.errorMessage, "Action impossible !")
+        XCTAssertEqual(calculatorError.errorMessage, "Math operateur inconnue !")
     }
-    
     
 }

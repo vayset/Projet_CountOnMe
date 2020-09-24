@@ -18,9 +18,6 @@ class Calculator {
         }
     }
     
-    // textToCompute => String => "23 + 5 - 25"
-    // elements => [String] => ["23", "+", "5", "-", "0"]
-    
     // MARK: Methods - Internal
     
     func addDigit(_ digit: Int) {
@@ -60,7 +57,7 @@ class Calculator {
             guard
                 let left = Double(operationsToReduce[startRectangleIndex]),
                 let right = Double(operationsToReduce[startRectangleIndex + 2])
-                else { throw CalculatorError.expressionIsIncorrect }
+            else { throw CalculatorError.expressionIsIncorrect }
             
             let operand = operationsToReduce[startRectangleIndex + 1]
             
@@ -91,11 +88,7 @@ class Calculator {
             startRectangleIndex = 0
         }
         
-        
         let finalResult = operationsToReduce.first!
-        
-        
-        
         
         textToCompute.append(" = \(finalResult)")
     }
@@ -104,7 +97,6 @@ class Calculator {
     // MARK: - PRIVATE
     
     // MARK: Properties - PRIVATE
-    
     
     private var elements: [String] {
         return textToCompute.split(separator: " ").map { "\($0)" }
