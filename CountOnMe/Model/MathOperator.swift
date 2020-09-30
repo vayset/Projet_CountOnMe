@@ -1,6 +1,5 @@
 import Foundation
 
-
 enum MathOperator: CaseIterable {
     case plus
     case minus

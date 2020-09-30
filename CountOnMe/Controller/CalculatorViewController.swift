@@ -1,6 +1,5 @@
 import UIKit
 
-
 class CalculatorViewController: UIViewController {
     
     // MARK: - INTERNAL
@@ -11,20 +10,16 @@ class CalculatorViewController: UIViewController {
         super.viewDidLoad()
         calculator.delegate = self
     }
-    
+
     // MARK: - PRIVATE
-    
     
     // MARK: Properties - Private
     
     private let calculator = Calculator()
     
-    
     // MARK: IBOutlets
     
     @IBOutlet private weak var operationTextView: UITextView!
-    
-    
     
     // MARK: Methods - Private
     
@@ -38,7 +33,6 @@ class CalculatorViewController: UIViewController {
         alertVC.addAction(UIAlertAction(title: "OK", style: .cancel, handler: nil))
         present(alertVC, animated: true, completion: nil)
     }
-    
     
     // MARK: IBActions
     
@@ -68,7 +62,6 @@ class CalculatorViewController: UIViewController {
     }
     
 }
-
 
 extension CalculatorViewController: CalculatorDelegate {
     

@@ -33,9 +33,6 @@ class CalculatorViewController: UIViewController {
         return textView.text.firstIndex(of: "=") != nil
     }
     
-
-    
-    
     // View actions
     @IBAction func tappedNumberButton(_ sender: UIButton) {
         
@@ -99,4 +96,3 @@ class CalculatorViewController: UIViewController {
     }
 
 }
-

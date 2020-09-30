@@ -1,6 +1,6 @@
 import Foundation
 
-protocol CalculatorDelegate {
+protocol CalculatorDelegate: class {
     func didUpdateTextToCompute(textToCompute: String)
 }
 
@@ -10,7 +10,7 @@ class Calculator {
     
     // MARK: Properties - Internal
     
-    var delegate: CalculatorDelegate?
+    weak var delegate: CalculatorDelegate?
     
     var textToCompute: String = "" {
         didSet {
@@ -92,7 +92,6 @@ class Calculator {
         
         textToCompute.append(" = \(finalResult)")
     }
-    
     
     // MARK: - PRIVATE
     

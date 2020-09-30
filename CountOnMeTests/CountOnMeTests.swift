@@ -6,6 +6,8 @@
 //  Copyright © 2020 Vincent Saluzzo. All rights reserved.
 //
 
+//swiftlint:disable force_try force_cast
+
 @testable import CountOnMe
 import XCTest
 
